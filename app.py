@@ -1,22 +1,21 @@
-from dash.exceptions import PreventUpdate
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html, Dash, dash_table
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import dash_table
-from jupyter_dash import JupyterDash
 from dash.dependencies import Output, Input, State
 import plotly.express as px
+import os
+from gunicorn.app.wsgiapp import run
+import gunicorn.app.base
 
 # Chargement des données
-korian = pd.read_csv("/Users/etienne/Documents/Déploiement/Dash/2207-dash/Evenements_Medicaux_Korian.csv")
+korian = pd.read_csv("Evenements_Medicaux_Korian.csv")
 format = '%Y/%m/%d %H:%M:%S.%f'
 korian['TIME_EVENEMENT'] = pd.to_datetime(korian['DATE_EVENEMENT'], errors='coerce', format=format)
 korian['YEAR_EVENEMENT'] = pd.DatetimeIndex(korian['TIME_EVENEMENT']).year
 korian = korian[(korian['YEAR_EVENEMENT'] >= 2000) & (korian['YEAR_EVENEMENT'] <= 2021)]
 
 # Initialisation de l'application
-app = JupyterDash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
 
 # Layout de l'application
 app.layout = html.Div(children=[
@@ -84,4 +83,5 @@ def filter_df(n_clicks, etab, year):
         return df.head(5).to_dict('records'), fig
 
 # Lancement du serveur
-app.run_server(mode='inline', port=8049, height=750)
+if __name__ == '__main__':
+    app.run_server(debug=True)
