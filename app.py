@@ -16,7 +16,8 @@ korian = korian[(korian['YEAR_EVENEMENT'] >= 2000) & (korian['YEAR_EVENEMENT'] <
 
 # Initialisation de l'application
 app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
-
+# Exposer l'objet server pour Gunicorn
+server = app.server
 # Layout de l'application
 app.layout = html.Div(children=[
     html.H1('Données médicales Korian'),
